@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <ProjectSession>
+    <PathDelim Value="\"/>
+    <Version Value="12"/>
+    <BuildModes Active="Default"/>
+    <Units>
+      <Unit>
+        <Filename Value="dmeenu.lpr"/>
+        <IsPartOfProject Value="True"/>
+        <TopLine Value="5"/>
+        <CursorPos X="20" Y="12"/>
+        <UsageCount Value="68"/>
+        <Loaded Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="fmmain.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="MainForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="1"/>
+        <TopLine Value="20"/>
+        <CursorPos X="15" Y="28"/>
+        <UsageCount Value="68"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="fmmain.lfm"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="14" Y="6"/>
+        <UsageCount Value="5"/>
+        <DefaultSyntaxHighlighter Value="LFM"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\..\..\..\bin\lazarus-2.2.4\lcl\forms.pp"/>
+        <UnitName Value="Forms"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="617"/>
+        <CursorPos Y="634"/>
+        <UsageCount Value="5"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\..\..\..\bin\lazarus-2.2.4\lcl\stdctrls.pp"/>
+        <UnitName Value="StdCtrls"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="947"/>
+        <CursorPos X="14" Y="956"/>
+        <UsageCount Value="5"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\..\..\..\bin\lazarus-2.2.4\lcl\graphics.pp"/>
+        <UnitName Value="Graphics"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="1130"/>
+        <CursorPos X="45" Y="1137"/>
+        <UsageCount Value="5"/>
+      </Unit>
+    </Units>
+    <JumpHistory HistoryIndex="29">
+      <Position>
+        <Filename Value="fmmain.pas"/>
+        <Caret Line="112" Column="30" TopLine="89"/>
+      </Position>
+      <Position>
+        <Filename Value="fmmain.pas"/>
+        <Caret Line="61" Column="20" TopLine="44"/>
+      </Position>
+      <Position>
+        <Filename Value="fmmain.pas"/>
+        <Caret Line="23" Column="14" TopLine="7"/>
+      </Position>
+      <Position>
+        <Filename Value="fmmain.pas"/>
+        <Caret Line="84" Column="19" TopLine="79"/>
+      </Position>
+      <Position>
+        <Filename Value="fmmain.pas"/>
+        <Caret Line="83" Column="19" TopLine="78"/>
+      </Position>
+      <Position>
+        <Filename Value="fmmain.pas"/>
+        <Caret Line="127" Column="3" TopLine="119"/>
+      </Position>
+      <Position>
+        <Filename Value="fmmain.pas"/>
+        <Caret Line="16" Column="14" TopLine="6"/>
+      </Position>
+      <Position>
+        <Filename Value="fmmain.pas"/>
+        <Caret Line="124" Column="35" TopLine="119"/>
+      </Position>
+      <Position>
+        <Filename Value="fmmain.pas"/>
+        <Caret Line="25" Column="14" TopLine="23"/>
+      </Position>
+      <Position>
+        <Filename Value="fmmain.pas"/>
+        <Caret Line="130" Column="37" TopLine="119"/>
+      </Position>
+      <Position>
+        <Filename Value="fmmain.pas"/>
+        <Caret Line="133" Column="31" TopLine="121"/>
+      </Position>
+      <Position>
+        <Filename Value="fmmain.pas"/>
+        <Caret Line="25" Column="14" TopLine="13"/>
+      </Position>
+      <Position>
+        <Filename Value="fmmain.pas"/>
+        <Caret Line="128" Column="3" TopLine="109"/>
+      </Position>
+      <Position>
+        <Filename Value="fmmain.pas"/>
+        <Caret Line="25" Column="27" TopLine="17"/>
+      </Position>
+      <Position>
+        <Filename Value="fmmain.pas"/>
+        <Caret Line="121" TopLine="117"/>
+      </Position>
+      <Position>
+        <Filename Value="fmmain.pas"/>
+        <Caret Line="26" Column="14" TopLine="17"/>
+      </Position>
+      <Position>
+        <Filename Value="fmmain.pas"/>
+        <Caret Line="128" Column="3" TopLine="124"/>
+      </Position>
+      <Position>
+        <Filename Value="fmmain.pas"/>
+        <Caret Line="26" Column="14" TopLine="18"/>
+      </Position>
+      <Position>
+        <Filename Value="fmmain.pas"/>
+        <Caret Line="136" Column="36" TopLine="124"/>
+      </Position>
+      <Position>
+        <Filename Value="fmmain.pas"/>
+        <Caret Line="20" Column="25" TopLine="13"/>
+      </Position>
+      <Position>
+        <Filename Value="fmmain.pas"/>
+        <Caret Line="174" TopLine="170"/>
+      </Position>
+      <Position>
+        <Filename Value="fmmain.pas"/>
+        <Caret Line="172" Column="6" TopLine="162"/>
+      </Position>
+      <Position>
+        <Filename Value="fmmain.pas"/>
+        <Caret Line="20" Column="15" TopLine="13"/>
+      </Position>
+      <Position>
+        <Filename Value="fmmain.pas"/>
+        <Caret Line="179" Column="13" TopLine="170"/>
+      </Position>
+      <Position>
+        <Filename Value="fmmain.pas"/>
+        <Caret Line="29" Column="57" TopLine="19"/>
+      </Position>
+      <Position>
+        <Filename Value="fmmain.pas"/>
+        <Caret Line="163" Column="20" TopLine="152"/>
+      </Position>
+      <Position>
+        <Filename Value="fmmain.pas"/>
+        <Caret Line="31" Column="13" TopLine="22"/>
+      </Position>
+      <Position>
+        <Filename Value="fmmain.pas"/>
+        <Caret Line="170" Column="30" TopLine="168"/>
+      </Position>
+      <Position>
+        <Filename Value="fmmain.pas"/>
+        <Caret Line="28" Column="15" TopLine="23"/>
+      </Position>
+      <Position>
+        <Filename Value="fmmain.pas"/>
+        <Caret Line="153" TopLine="144"/>
+      </Position>
+    </JumpHistory>
+    <RunParams>
+      <FormatVersion Value="2"/>
+      <Modes ActiveMode=""/>
+    </RunParams>
+  </ProjectSession>
+  <Debugging>
+    <BreakPoints>
+      <Item>
+        <Kind Value="bpkSource"/>
+        <WatchScope Value="wpsLocal"/>
+        <WatchKind Value="wpkWrite"/>
+        <Source Value="fmmain.pas"/>
+        <Line Value="200"/>
+      </Item>
+    </BreakPoints>
+  </Debugging>
+</CONFIG>
