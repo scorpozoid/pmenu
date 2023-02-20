@@ -60,6 +60,10 @@ implementation
 
 constructor TMainForm.Create(aOwner: TComponent);
 begin
+  // AllocConsole;      // in Windows unit
+  // IsConsole := True; // in System unit
+  // SysInitStdIO;
+
   Visible := False;
   inherited Create(aOwner);
   FCurrent := -1;

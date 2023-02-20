@@ -1,0 +1,4 @@
+﻿backup/*
+lib/*
+*.exe
+*.lps
