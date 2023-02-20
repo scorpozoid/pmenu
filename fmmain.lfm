@@ -1,11 +1,42 @@
 object MainForm: TMainForm
-  Left = 654
-  Height = 78
-  Top = 340
+  Left = 670
+  Height = 50
+  Top = 242
   Width = 1128
   Align = alTop
   BorderStyle = bsNone
   Caption = 'MainForm'
+  ClientHeight = 50
+  ClientWidth = 1128
   DesignTimePPI = 192
   LCLVersion = '2.2.4.0'
+  object SearchEdit: TEdit
+    Left = 0
+    Height = 50
+    Top = 0
+    Width = 160
+    Align = alLeft
+    BorderStyle = bsNone
+    ParentColor = True
+    TabOrder = 0
+  end
+  object ItemPanel: TPanel
+    Left = 160
+    Height = 50
+    Top = 0
+    Width = 929
+    Align = alClient
+    BevelOuter = bvNone
+    TabOrder = 1
+  end
+  object ClosePanel: TPanel
+    Left = 1089
+    Height = 50
+    Top = 0
+    Width = 39
+    Align = alRight
+    BevelOuter = bvNone
+    Caption = 'X'
+    TabOrder = 2
+  end
 end

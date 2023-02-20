@@ -3,36 +3,44 @@ unit fmmain;
 interface
 
 uses
-  Windows,
+  // Windows,
   LCLType, Math,
-  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls;
+  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ExtCtrls;
 
 type
 
   { TMainForm }
 
   TMainForm = class(TForm)
+    ClosePanel: TPanel;
+    SearchEdit: TEdit;
+    ItemPanel: TPanel;
   private
-    // FMaxTextHeight: Integer;
     FItems: TStringList;
-    FCurrent: Integer;
-    procedure HandleKey(aSender: TObject; var aKey: Word; aShift: TShiftState);
-    procedure HandleSearchKeyDown(aSender: TObject; var aKey: Word; aShift: TShiftState);
+    FCurrentIndex: Integer;
+
+    function GetCurrent: TLabel;
+    function GetItem(const aIndex: Integer): TLabel;
+
     procedure HandleKeyDown(aSender: TObject; var aKey: Word; aShift: TShiftState);
-    procedure HandleKeyPress(aSender: TObject; var aKey: char);
-    procedure HandleKeyUp(aSender: TObject; var aKey: Word; aShift: TShiftState);
+ // procedure HandleKeyPress(aSender: TObject; var aKey: char);
+ // procedure HandleKeyUp(aSender: TObject; var aKey: Word; aShift: TShiftState);
     procedure HandleCloseClick(aSender: TObject);
     procedure HandleItemClick(aSender: TObject);
-    procedure HandleEditChange(aSender: TObject);
+
+    procedure HandleSearchEditChange(aSender: TObject);
+    procedure HandleSearchKeyDown(aSender: TObject; var aKey: Word; aShift: TShiftState);
 
     function InRange(const aIndex: Integer): Boolean;
+
     function MaxTextHeight: Integer;
-    procedure SetupPosition;
-    function BuildSearchEdit(const aParent: TWinControl): TEdit;
-    function BuildCloseLabel(const aParent: TWinControl): TLabel;
-    function BuildItemLabel(const aParent: TWinControl; const aLabel: string): TLabel;
-    procedure BuildDefaultItems(const aParent: TWinControl);
-    procedure BuildMenuItems(const aParent: TWinControl);
+    function BuildItemLabel(const aParent: TWinControl; const aLabel: string; const aIndex: Integer): TLabel;
+
+    procedure InitGui;
+
+    procedure InitItems;
+    procedure DoneItems;
+
     procedure LoadItems(const aStringList: TStringList);
 
     procedure Refilter(const aText: string);
@@ -42,11 +50,18 @@ type
     procedure PrevItem;
     function Return: Integer;
     procedure ActivateCurrent;
+
+    property Item[const aIndex: Integer]: TLabel read GetItem;
+    property Current: TLabel read GetCurrent;
   public const
     cAppName = 'dmeenu';
   public
     constructor Create(aOwner: TComponent); override;
     destructor Destroy; override;
+
+    procedure AfterConstruction; override;
+    procedure BeforeDestruction; override;
+
   end;
 
 var
@@ -60,21 +75,15 @@ implementation
 
 constructor TMainForm.Create(aOwner: TComponent);
 begin
-  // AllocConsole;      // in Windows unit
-  // IsConsole := True; // in System unit
+  // AllocConsole;
+  // IsConsole := True;
   // SysInitStdIO;
 
   Visible := False;
   inherited Create(aOwner);
-  FCurrent := -1;
+  FCurrentIndex := -1;
   FItems := TStringList.Create;
-  KeyPreview := True;
-  OnKeyDown := HandleKeyDown;
-  OnKeyUp := HandleKeyUp;
-  OnKeyPress := HandleKeyPress;
-  SetupPosition;
-  BuildDefaultItems(Self);
-  BuildMenuItems(Self);
+  FItems.OwnsObjects := True;
 end;
 
 
@@ -83,6 +92,20 @@ begin
   if (Assigned(FItems)) then
     FreeAndNil(FItems);
   inherited Destroy;
+end;
+
+procedure TMainForm.AfterConstruction;
+begin
+  inherited AfterConstruction;
+  InitGui;
+  InitItems;
+end;
+
+
+procedure TMainForm.BeforeDestruction;
+begin
+  inherited BeforeDestruction;
+  DoneItems;
 end;
 
 
@@ -102,58 +125,7 @@ begin
 end;
 
 
-procedure TMainForm.SetupPosition;
-const
-  cOffset = 2;
-begin
-  Color := RGBToColor(3,3,3); // clDkGray;
-  Left := 0;
-  Top := 0;
-  Height := MaxTextHeight + cOffset;
-  Width := Screen.Width;
-  KeyPreview := True;
-  FormStyle := fsSystemStayOnTop;
-end;
-
-
-function TMainForm.BuildSearchEdit(const aParent: TWinControl): TEdit;
-begin
-  Result := TEdit.Create(aParent);
-  Result.Left := 0;
-  Result.Parent := aParent;
-  Result.DoubleBuffered := True;
-  Result.Align := alLeft;
-  Result.Alignment := taLeftJustify;
-  Result.BorderStyle := bsNone;
-  Result.Color := aParent.Color;
-  Result.Font.Color := clWhite;
-  Result.Font.Style := Result.Font.Style + [fsBold];
-  Result.Width := Screen.Width div 10; // Canvas.TextWidth(cAppName);
-  Result.Visible := True;
-  Result.OnChange := HandleEditChange;
-  Result.OnKeyDown := HandleSearchKeyDown;
-end;
-
-
-function TMainForm.BuildCloseLabel(const aParent: TWinControl): TLabel;
-begin
-  Result := TLabel.Create(aParent);
-  Result.Parent := aParent;
-  // Result.Color := clGreen;
-  Result.Transparent := True;
-  Result.Caption := 'X';
-  Result.Align := alRight;
-  Result.AutoSize := True;
-  Result.Font.Color:= clRed;
-  Result.Font.Style := Result.Font.Style + [fsBold];
-  Result.Width := Canvas.TextWidth(Result.Caption) + 100;
-  Result.OnClick := HandleCloseClick;
-//Result.onke := HandleKeyDown;
-  Result.Visible := True;
-end;
-
-
-function TMainForm.BuildItemLabel(const aParent: TWinControl; const aLabel: string): TLabel;
+function TMainForm.BuildItemLabel(const aParent: TWinControl; const aLabel: string; const aIndex: Integer): TLabel;
 
   function ItemLeft: Integer;
   var
@@ -164,7 +136,6 @@ function TMainForm.BuildItemLabel(const aParent: TWinControl; const aLabel: stri
       for vI := 0 to aParent.ControlCount - 1 do begin;
         Result := Max(Result, aParent.Controls[vI].Left + aParent.Controls[vI].Width);
       end;
-//      Result := Result + aParent.Controls[aParent.ControlCount - 1].Width;;
     end;
   end;
 
@@ -175,29 +146,48 @@ begin
   Result.Caption := aLabel;
   Result.AutoSize := False;
   Result.Font.Color := clGray;
-  Result.Width := Canvas.TextWidth(Result.Caption) + 32;
+  Result.Align := alNone;
   Result.Top := 0;
-  Result.Left := ItemLeft; // Screen.Width;
-  Result.Name := 'Label' + IntToStr(ItemLeft);
-  Result.Align := alLeft;
-//  Result.Visible := True;
+  Result.Left := ItemLeft;
+  Result.Width := Canvas.TextWidth(Result.Caption) + Canvas.TextWidth('::');
+  Result.Height := Self.ClientHeight;
+  Result.Left := ItemLeft;
+  Result.Tag := aIndex;
   Result.OnClick := HandleItemClick;
   Refresh;
 end;
 
 
-procedure TMainForm.BuildDefaultItems(const aParent: TWinControl);
-var
-  vEdit: TEdit;
+procedure TMainForm.InitGui;
+const
+  cOffset = 2;
 begin
-  vEdit := BuildSearchEdit(aParent);
-  BuildCloseLabel(aParent);
+  Color := RGBToColor(3, 3, 3);
+  Left := 0;
+  Top := 0;
+  Height := MaxTextHeight + cOffset;
+  Width := Screen.Width;
+  FormStyle := fsSystemStayOnTop;
+  KeyPreview := True;
+  ActiveControl := SearchEdit;
+
+  OnKeyDown := HandleKeyDown;
+  OnKeyUp := nil;
+  OnKeyPress := nil;
+
+  SearchEdit.Font.Color := clWhite;
+  SearchEdit.Font.Style := SearchEdit.Font.Style + [fsBold];
+  SearchEdit.Width := Screen.Width div 10;
+  SearchEdit.OnChange := HandleSearchEditChange;
+  SearchEdit.OnKeyDown := HandleSearchKeyDown;
+
+  ClosePanel.OnClick := HandleCloseClick;
+
   Visible := True;
-  ActiveControl := vEdit;
 end;
 
 
-procedure TMainForm.BuildMenuItems(const aParent: TWinControl);
+procedure TMainForm.InitItems;
 var
   vItems: TStringList;
 begin
@@ -207,6 +197,29 @@ begin
   finally
     FreeAndNil(vItems)
   end;
+  Refilter(EmptyStr);
+end;
+
+
+procedure TMainForm.DoneItems;
+begin
+  if (1 > FItems.Count) then
+    Exit;
+  // ! OwnsObjects
+  // for vI := FItems.Count - 1 downto 0 do begin
+  //   vObject := FItems.Objects[vI];
+  //   if (Assigned(vObject)) then try
+  //     if (vObject is TLabel) then begin
+  //       vLabel := vObject as TLabel;
+  //       vLabel.Hide;
+  //       vLabel.Parent := nil;
+  //     end;
+  //     FreeAndNil(vObject);
+  //   finally
+  //     FItems.Objects[vI] := nil;
+  //   end;
+  // end;
+  FItems.Clear;
 end;
 
 
@@ -215,14 +228,22 @@ var
   vI: Integer;
   vLabel: TLabel;
   vCaption: string;
+  vAlreadyExists: Boolean;
 begin
   if (not Assigned(aStringList)) then
     Exit;
   if (aStringList.Count < 1) then
     Exit;
   for vI := 0 to aStringList.Count - 1 do begin
-    vCaption := aStringList.Strings[vI];
-    vLabel := BuildItemLabel(Self, vCaption);
+    vCaption := Trim(aStringList.Strings[vI]);
+    if (EmptyStr = vCaption) then
+      Continue;
+    vAlreadyExists := -1 < FItems.IndexOf(vCaption);
+    if (vAlreadyExists) then
+      Continue;
+    vLabel := BuildItemLabel(ItemPanel, vCaption, vI);
+    if (not Assigned(vLabel)) then
+      Continue;
     FItems.AddObject(vCaption, vLabel);
   end;
 end;
@@ -234,13 +255,12 @@ var
   vCurrent: TLabel;
   vOffset: Integer;
 begin
-  vOffset := 1;
+  vOffset := Canvas.TextWidth('::');
+  FCurrentIndex := -1;
   for vI := 0 to FItems.Count - 1 do begin
-    if (not Assigned(FItems.Objects[vI])) then
+    vCurrent := Item[vI];
+    if (not Assigned(vCurrent)) then
       Continue;
-    if (not (FItems.Objects[vI] is TLabel)) then
-      Continue;
-    vCurrent := FItems.Objects[vI] as TLabel;
     if (aText = EmptyStr) then begin
       vCurrent.Visible := True;
     end else begin
@@ -248,10 +268,13 @@ begin
       vCurrent.Visible := vCaption.Contains(aText);
     end;
     if (vCurrent.Visible) then begin
+      if (0 > FCurrentIndex) then
+        FCurrentIndex := vI;
       vCurrent.Left := vOffset;
-      vOffset := Max(vOffset, vCurrent.Left + vCurrent.Width);
+      vOffset := Max(vOffset, vCurrent.Left + vCurrent.Width + Canvas.TextWidth('::'));
     end;
   end;
+  ActivateCurrent;
 end;
 
 
@@ -262,26 +285,58 @@ begin
   Result.Add('ff');
   Result.Add('far');
   Result.Add('label2');
-  Result.Add('ooo');
+  Result.Add('ooo'); Result.Add('ooo2'); Result.Add('ooo3'); Result.Add('ooo4');
+  Result.Add('label23'); Result.Add('label25'); Result.Add('label26'); Result.Add('label27');
+  Result.Add('label33'); Result.Add('label35'); Result.Add('label36'); Result.Add('label37');
+  Result.Add('label43'); Result.Add('label45'); Result.Add('label46'); Result.Add('label47');
+  Result.Add('label53'); Result.Add('label55'); Result.Add('label56'); Result.Add('label57');
+  Result.Add('label63'); Result.Add('label65'); Result.Add('label66'); Result.Add('label67');
+  Result.Add('label73'); Result.Add('label75'); Result.Add('label76'); Result.Add('label77');
+  Result.Add('label83'); Result.Add('label85'); Result.Add('label86'); Result.Add('label87');
+  Result.Add('ooo111'); Result.Add('ooo2222'); Result.Add('ooo3333'); Result.Add('ooo4444');
 end;
 
 
 procedure TMainForm.NextItem;
+var
+  vIndex: Integer;
+  vItem: TLabel;
 begin
-  if (FItems.Count > 0) then
-    FCurrent := Min(FCurrent + 1, FItems.Count - 1)
-  else
-    FCurrent := -1;
+  if (1 > FItems.Count) then
+    Exit;
+  vIndex := FCurrentIndex;
+  while vIndex < FItems.Count do begin
+    vIndex := Max(0, Min(vIndex + 1, FItems.Count));
+    vItem := Item[vIndex];
+    if (not Assigned(vItem)) then
+      Continue;
+    if (vItem.Visible) then begin
+      FCurrentIndex := vIndex;
+      Break;
+    end;
+  end;
   ActivateCurrent;
 end;
 
 
 procedure TMainForm.PrevItem;
+var
+  vIndex: Integer;
+  vItem: TLabel;
 begin
-  if (FItems.Count > 0) then
-    FCurrent := Max(0, FCurrent - 1)
-  else
-    FCurrent := -1;
+  if (1 > FItems.Count) then
+    Exit;
+  vIndex := FCurrentIndex;
+  while vIndex > 0 do begin
+    vIndex := Max(-1, Min(vIndex - 1, FItems.Count - 1));
+    vItem := Item[vIndex];
+    if (not Assigned(vItem)) then
+      Continue;
+    if (vItem.Visible) then begin
+      FCurrentIndex := vIndex;
+      Break;
+    end;
+  end;
   ActivateCurrent;
 end;
 
@@ -292,16 +347,12 @@ var
   vCurrent: TLabel;
 begin
   Result := -1;
-  if InRange(FCurrent) then
-    Exit;
-  if (not Assigned(FItems.Objects[FCurrent])) then
-    Exit;
-  if (not (FItems.Objects[FCurrent] is TLabel)) then
-    Exit;
-  Result := FCurrent;
-  vCurrent := FItems.Objects[Result] as TLabel;
-  vResult := vCurrent.Caption;
-  Writeln(vResult);
+  vCurrent := Current;
+  if (Assigned(vCurrent)) then begin
+    Result := FCurrentIndex;
+    vResult := vCurrent.Caption;
+    Writeln(vResult);
+  end;
   Application.Terminate;
 end;
 
@@ -309,24 +360,79 @@ end;
 procedure TMainForm.ActivateCurrent;
 var
   vI: Integer;
+  vItem: TLabel;
   vCurrent: TLabel;
+  vOverdoze, vRightSide: Integer;
 begin
-  vCurrent := nil;
   for vI := 0 to FItems.Count - 1 do begin
-    if (not Assigned(FItems.Objects[vI])) then
-      Exit;
-    if (not (FItems.Objects[vI] is TLabel)) then
-      Exit;
-    vCurrent := FItems.Objects[vI] as TLabel;
-    if (vI = FCurrent) then
-      vCurrent.Font.Color := clWhite
-    else
-      vCurrent.Font.Color := clGray;
+    vItem := Item[vI];
+    if (not Assigned(vItem)) then
+      Continue;
+    if (vI = FCurrentIndex) then begin
+      vItem.Font.Color := clWhite;
+      vCurrent := vItem;
+    end else begin
+      vItem.Font.Color := clGray;
+    end;
+  end;
+  if (not Assigned(vCurrent)) then
+    Exit;
+  if (vCurrent.Left < 0) then begin
+    vOverdoze := 0 - vCurrent.Left;
+    for vI := 0 to FItems.Count - 1 do begin
+      vItem := Item[vI];
+      if (not Assigned(vItem)) then
+        Continue;
+      vItem.Left := vItem.Left + vOverdoze;
+    end;
+  end else begin
+    vRightSide := ClosePanel.Width + ItemPanel.Left + vCurrent.Left + vCurrent.Width;
+    vOverdoze := vRightSide - Screen.Width;
+    if (vOverdoze > 0) then begin
+      for vI := 0 to FItems.Count - 1 do begin
+        vItem := Item[vI];
+        if (not Assigned(vItem)) then
+          Continue;
+        vItem.Left := vItem.Left - vOverdoze;
+      end;
+    end;
   end;
 end;
 
 
-procedure TMainForm.HandleKey(aSender: TObject; var aKey: Word; aShift: TShiftState);
+function TMainForm.GetCurrent: TLabel;
+begin
+  Result := GetItem(FCurrentIndex);
+end;
+
+
+function TMainForm.GetItem(const aIndex: Integer): TLabel;
+begin
+  Result := nil;
+  if (not InRange(aIndex)) then
+    Exit;
+  if (not Assigned(FItems.Objects[aIndex])) then
+    Exit;
+  if (not (FItems.Objects[aIndex] is TLabel)) then
+    Exit;
+  Result := FItems.Objects[aIndex] as TLabel;
+end;
+
+
+procedure TMainForm.HandleSearchKeyDown(aSender: TObject; var aKey: Word; aShift: TShiftState);
+begin
+  if (aKey = VK_RIGHT) then
+    aKey := 0;
+  if (aKey = VK_LEFT) then
+    aKey := 0;
+  if (aSender <> aSender) then
+    Exit;
+  if (aShift <> aShift) then
+    Exit;
+end;
+
+
+procedure TMainForm.HandleKeyDown(aSender: TObject; var aKey: Word; aShift: TShiftState);
 begin
   if (aKey = VK_ESCAPE) then
     Application.Terminate;
@@ -336,75 +442,52 @@ begin
     NextItem;
   if (aKey = VK_LEFT) then
     PrevItem;
-end;
-
-procedure TMainForm.HandleSearchKeyDown(aSender: TObject; var aKey: Word; aShift: TShiftState);
-begin
-  if (aKey = VK_RIGHT) then
-    aKey := 0;
-  if (aKey = VK_LEFT) then
-    aKey := 0;
-end;
-
-
-procedure TMainForm.HandleKeyDown(aSender: TObject; var aKey: Word; aShift: TShiftState);
-begin
-  HandleKey(aSender, aKey, aShift);
-end;
-
-
-procedure TMainForm.HandleKeyUp(aSender: TObject; var aKey: Word; aShift: TShiftState);
-begin
-  // HandleKey(aSender, aKey, aShift);
+  if (aSender <> aSender) then
+    Exit;
+  if (aShift <> aShift) then
+    Exit;
 end;
 
 
 procedure TMainForm.HandleCloseClick(aSender: TObject);
 begin
-  Application.Terminate;
+  if (aSender is TLabel) then
+    Application.Terminate;
 end;
 
 
 procedure TMainForm.HandleItemClick(aSender: TObject);
 begin
-  // MessageDlg('1', '2', dlg);
+  if (aSender is TLabel) then
+    Return;
 end;
 
 
-procedure TMainForm.HandleEditChange(aSender: TObject);
+procedure TMainForm.HandleSearchEditChange(aSender: TObject);
 var
   vEdit: TEdit;
   vWidth: Integer;
-const
-  cOffset = 36;
 begin
   if (aSender is TEdit) then begin
     vEdit := aSender as TEdit;
-    vWidth := Self.Canvas.TextWidth(vEdit.Text) + vEdit.BorderWidth * 2 + cOffset;
-    if (vWidth > vEdit.Width) then begin
-      if (vWidth < (Screen.Width div 2)) then begin
-        vEdit.Width := vWidth + Round(0.25 * vWidth);
-      end;
-    end;
-    vEdit.Left := 0;
+    vWidth := Integer(Round(1.25 * Self.Canvas.TextWidth(vEdit.Text)));
+    vEdit.Width := Min(Max(Screen.Width div 12, vWidth), Screen.Width div 2);
     Refilter(vEdit.Text);
   end;
 end;
 
+
 function TMainForm.InRange(const aIndex: Integer): Boolean;
 begin
   Result := Assigned(FItems);
-  if not Result then
+  if (not Result) then
     Exit;
   Result := 0 < FItems.Count;
-  if not Result then
+  if (not Result) then
     Exit;
-  Result := not ((FCurrent > -1) and (FCurrent < FItems.Count - 1));
+  Result := (aIndex > -1) and (aIndex < FItems.Count);
 end;
 
-procedure TMainForm.HandleKeyPress(aSender: TObject; var aKey: char);
-begin
-end;
 
 end.
 
