@@ -5,7 +5,6 @@ object MainForm: TMainForm
   Width = 1128
   Align = alTop
   BorderStyle = bsNone
-  Caption = 'MainForm'
   ClientHeight = 50
   ClientWidth = 1128
   DesignTimePPI = 192

@@ -3,9 +3,9 @@ unit fmmain;
 interface
 
 uses
-  // Windows,
-  LCLType, Math,
-  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ExtCtrls;
+  Windows,
+  LCLType, Math, Process,
+  Classes, SysUtils, StrUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ExtCtrls;
 
 type
 
@@ -41,6 +41,8 @@ type
     procedure InitItems;
     procedure DoneItems;
 
+    function FindConfig: string;
+    procedure LoadConfig(const aFileName: TFileName);
     procedure LoadItems(const aStringList: TStringList);
 
     procedure Refilter(const aText: string);
@@ -48,14 +50,21 @@ type
 
     procedure NextItem;
     procedure PrevItem;
-    function Return: Integer;
+
     procedure ActivateCurrent;
+
+    function Return: Integer;
+    function Execute: Integer;
+
+    procedure OutputString(const aValue: string);
 
     property Item[const aIndex: Integer]: TLabel read GetItem;
     property Current: TLabel read GetCurrent;
   public const
     cAppName = 'pmenu';
   public
+    class function Version: string;
+
     constructor Create(aOwner: TComponent); override;
     destructor Destroy; override;
 
@@ -73,15 +82,18 @@ implementation
 
 { TMainForm }
 
+class function TMainForm.Version: string;
+begin
+  {$I pmenu.version}
+end;
+
 constructor TMainForm.Create(aOwner: TComponent);
 begin
   // AllocConsole;
   // IsConsole := True;
   // SysInitStdIO;
-
-  Visible := False;
-  inherited Create(aOwner);
   FCurrentIndex := -1;
+  inherited Create(aOwner);
   FItems := TStringList.Create;
   FItems.OwnsObjects := True;
 end;
@@ -97,6 +109,10 @@ end;
 procedure TMainForm.AfterConstruction;
 begin
   inherited AfterConstruction;
+  ShowInTaskbar := stNever;
+  Application.Title := TMainForm.cAppName + '-' + TMainForm.Version;
+  Application.Hint := Application.Title;
+  Caption := Application.Title;
   InitGui;
   InitItems;
 end;
@@ -189,13 +205,19 @@ end;
 
 procedure TMainForm.InitItems;
 var
+  vConfig: TFileName;
   vItems: TStringList;
 begin
-  vItems := BuildItems;
-  if (Assigned(vItems)) then try
-    LoadItems(vItems);
-  finally
-    FreeAndNil(vItems)
+  vConfig := FindConfig;
+  if (FileExists(vConfig)) then begin
+    LoadConfig(vConfig);
+  end else begin
+    vItems := BuildItems;
+    if (Assigned(vItems)) then try
+      LoadItems(vItems);
+    finally
+      FreeAndNil(vItems)
+    end;
   end;
   Refilter(EmptyStr);
 end;
@@ -223,20 +245,62 @@ begin
 end;
 
 
+function TMainForm.FindConfig: string;
+var
+  vParameter: string;
+begin
+  Result := ExtractFileDir(Application.ExeName) + '\pmenu.menu';
+  if (not FileExists(Result)) then
+    Result := ExtractFileDir(Application.ExeName) + '\example.pmenu';
+  if (ParamCount > 0) then begin
+    vParameter := ParamStr(1);
+    if (FileExists(vParameter)) then begin
+      Result := vParameter;
+    end;
+  end;
+end;
+
+
+procedure TMainForm.LoadConfig(const aFileName: TFileName);
+var
+  vStringList: TStringList;
+begin
+  if (not FileExists(aFileName)) then
+    Exit;
+  vStringList := TStringList.Create;
+  try
+    vStringList.LoadFromFile(aFileName);
+    LoadItems(vStringList);
+  finally
+    vStringList.Free;
+  end;
+end;
+
+
 procedure TMainForm.LoadItems(const aStringList: TStringList);
 var
   vI: Integer;
   vLabel: TLabel;
+  vValue: string;
   vCaption: string;
   vAlreadyExists: Boolean;
+
+  function IsCommented(const aLine: string): Boolean;
+  begin
+    Result := aLine.StartsWith('#') or aLine.StartsWith('//') or aLine.StartsWith('--');
+  end;
+
 begin
   if (not Assigned(aStringList)) then
     Exit;
   if (aStringList.Count < 1) then
     Exit;
   for vI := 0 to aStringList.Count - 1 do begin
-    vCaption := Trim(aStringList.Strings[vI]);
+    vValue := Trim(aStringList.Strings[vI]);
+    vCaption := Trim(aStringList.Names[vI]);
     if (EmptyStr = vCaption) then
+      Continue;
+    if (IsCommented(vCaption)) then
       Continue;
     vAlreadyExists := -1 < FItems.IndexOf(vCaption);
     if (vAlreadyExists) then
@@ -244,7 +308,7 @@ begin
     vLabel := BuildItemLabel(ItemPanel, vCaption, vI);
     if (not Assigned(vLabel)) then
       Continue;
-    FItems.AddObject(vCaption, vLabel);
+    FItems.AddObject(vValue, vLabel);
   end;
 end;
 
@@ -281,19 +345,7 @@ end;
 function TMainForm.BuildItems: TStringList;
 begin
   Result := TStringList.Create;
-  Result.Add('label1');
-  Result.Add('ff');
-  Result.Add('far');
-  Result.Add('label2');
-  Result.Add('ooo'); Result.Add('ooo2'); Result.Add('ooo3'); Result.Add('ooo4');
-  Result.Add('label23'); Result.Add('label25'); Result.Add('label26'); Result.Add('label27');
-  Result.Add('label33'); Result.Add('label35'); Result.Add('label36'); Result.Add('label37');
-  Result.Add('label43'); Result.Add('label45'); Result.Add('label46'); Result.Add('label47');
-  Result.Add('label53'); Result.Add('label55'); Result.Add('label56'); Result.Add('label57');
-  Result.Add('label63'); Result.Add('label65'); Result.Add('label66'); Result.Add('label67');
-  Result.Add('label73'); Result.Add('label75'); Result.Add('label76'); Result.Add('label77');
-  Result.Add('label83'); Result.Add('label85'); Result.Add('label86'); Result.Add('label87');
-  Result.Add('ooo111'); Result.Add('ooo2222'); Result.Add('ooo3333'); Result.Add('ooo4444');
+  Result.Add('exit');
 end;
 
 
@@ -351,9 +403,49 @@ begin
   if (Assigned(vCurrent)) then begin
     Result := FCurrentIndex;
     vResult := vCurrent.Caption;
-    Writeln(vResult);
+    Execute;
+    OutputString(vResult);
   end;
   Application.Terminate;
+end;
+
+
+function TMainForm.Execute: Integer;
+var
+  vCommand: string;
+  vOut: string;
+  vUserName: string;
+  vProcessOptions: TProcessOptions;
+  vWindowOptions: TShowWindowOptions;
+begin
+  Result := -1;
+  if (InRange(FCurrentIndex)) then
+    vCommand := Trim(FItems.ValueFromIndex[FCurrentIndex]);
+  if (EmptyStr = vCommand) then
+    Exit;
+  vUserName := GetEnvironmentVariable('USERNAME');
+  vCommand := ReplaceText(vCommand, '%USERNAME%', vUserName);
+  vOut := EmptyStr;
+  vProcessOptions := [poDetached]; // poDetached
+  vWindowOptions := swoNone; // swoMinimize;
+  try
+    // OutputString('Execute: ' + vCommand);
+    RunCommand(vCommand, [], vOut, vProcessOptions, vWindowOptions);
+    // vExecuteFlags: TExecuteFlags;
+    // vExecuteFlags := [];
+    // ExecuteProcess(vCommand, '', vExecuteFlags);
+  except
+    on E: Exception do
+      OutputString(vCommand + ' -- ' + E.Message);
+  end;
+end;
+
+
+procedure TMainForm.OutputString(const aValue: string);
+begin
+  if (aValue <> aValue) then
+    Exit;
+    // WriteLn(aValue);
 end;
 
 
