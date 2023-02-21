@@ -1,0 +1,12 @@
+quit=exit
+# notepad=C:\Windows\notepad.exe -- fail, can't detach
+# explorer=C:\Windows\explorer.exe -- fail, can't detach
+procexp=C:\home\%USERNAME%\bin\sysinternals-2021-04-14\procexp.exe
+gitex=C:\home\%USERNAME%\devel\shell\run\gitex.cmd
+# gitex=C:\home\%USERNAME%\bin\gitpack-2022.09.07\gitex.cmd
+aimp=C:\home\%USERNAME%\devel\shell\run\aimp.cmd
+dbeaver=C:\home\%USERNAME%\devel\shell\run\dbeaver.cmd
+ff=C:\home\%USERNAME%\devel\shell\run\ff.cmd
+# ffp=C:\home\%USERNAME%\bin\ff-104.0.1\FirefoxPortable.exe -- fail, can't detach
+gimp=C:\home\%USERNAME%\devel\shell\run\gimp.cmd
+postgresql=C:\home\%USERNAME%\bin\postgresql-9.4.26\32\cmd\pgsql-postgres.cmd
