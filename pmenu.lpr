@@ -1,4 +1,4 @@
-program dmeenu;
+program pmenu;
 
 {$mode objfpc}{$H+}
 

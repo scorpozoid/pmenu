@@ -54,7 +54,7 @@ type
     property Item[const aIndex: Integer]: TLabel read GetItem;
     property Current: TLabel read GetCurrent;
   public const
-    cAppName = 'dmeenu';
+    cAppName = 'pmenu';
   public
     constructor Create(aOwner: TComponent); override;
     destructor Destroy; override;
