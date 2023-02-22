@@ -24,8 +24,8 @@ uses
     if (ParamCount > 0) then begin
       vParameter := ParamStr(1);
       Result :=
-        MatchText('--version', [vParameter]) or
-        MatchText('\v', [vParameter])
+        ('--version' = vParameter) or
+        ('\v' = vParameter)
     end;
   end;
 

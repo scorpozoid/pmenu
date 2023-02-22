@@ -3,7 +3,7 @@ unit fmmain;
 interface
 
 uses
-  Windows,
+//Windows,
   LCLType, Math, Process,
   Classes, SysUtils, StrUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ExtCtrls;
 
