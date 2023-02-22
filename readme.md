@@ -20,5 +20,5 @@
 
 `pmenu` at top at the top of the screen.
 
-[pmenu.png](pmenu.png)
+![pmenu.png](pmenu.png)
 
