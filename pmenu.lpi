@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
   <ProjectOptions>
     <Version Value="12"/>
@@ -14,6 +14,14 @@
       </XPManifest>
       <Icon Value="0"/>
     </General>
+    <VersionInfo>
+      <UseVersionInfo Value="True"/>
+      <MajorVersionNr Value="2023"/>
+      <MinorVersionNr Value="10223"/>
+      <RevisionNr Value="10159"/>
+      <BuildNr Value="19073"/>
+      <StringTable FileDescription="0.1.23022301 (2023.10223.10159.19073)" InternalName="pmenu" ProductName="pmenu" ProductVersion="0.1.23022301"/>
+    </VersionInfo>
     <BuildModes>
       <Item Name="Default" Default="True"/>
     </BuildModes>
