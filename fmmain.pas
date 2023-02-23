@@ -56,6 +56,8 @@ type
     function Return: Integer;
     function Execute: Integer;
 
+    procedure Quit;
+
     procedure OutputString(const aValue: string);
 
     property Item[const aIndex: Integer]: TLabel read GetItem;
@@ -406,7 +408,7 @@ begin
     Execute;
     OutputString(vResult);
   end;
-  Application.Terminate;
+  Quit;
 end;
 
 
@@ -438,6 +440,12 @@ begin
     on E: Exception do
       OutputString(vCommand + ' -- ' + E.Message);
   end;
+end;
+
+
+procedure TMainForm.Quit;
+begin
+  Close; // Application.Terminate;
 end;
 
 
@@ -527,7 +535,7 @@ end;
 procedure TMainForm.HandleKeyDown(aSender: TObject; var aKey: Word; aShift: TShiftState);
 begin
   if (aKey = VK_ESCAPE) then
-    Application.Terminate;
+    Quit;
   if (aKey = VK_RETURN) then
     Return;
   if (aKey = VK_RIGHT) then
@@ -544,14 +552,16 @@ end;
 procedure TMainForm.HandleCloseClick(aSender: TObject);
 begin
   if (aSender is TLabel) then
-    Application.Terminate;
+    Quit;
 end;
 
 
 procedure TMainForm.HandleItemClick(aSender: TObject);
 begin
-  if (aSender is TLabel) then
+  if (aSender is TLabel) then begin
+    SearchEdit.Text := (aSender as TLabel).Caption;
     Return;
+  end;
 end;
 
 
