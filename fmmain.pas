@@ -15,6 +15,7 @@ type
     ClosePanel: TPanel;
     SearchEdit: TEdit;
     ItemPanel: TPanel;
+    AutoQuitTimer: TTimer;
   private
     FItems: TStringList;
     FCurrentIndex: Integer;
@@ -27,6 +28,7 @@ type
  // procedure HandleKeyUp(aSender: TObject; var aKey: Word; aShift: TShiftState);
     procedure HandleCloseClick(aSender: TObject);
     procedure HandleItemClick(aSender: TObject);
+    procedure HandleTimer(aSender: TObject);
 
     procedure HandleSearchEditChange(aSender: TObject);
     procedure HandleSearchKeyDown(aSender: TObject; var aKey: Word; aShift: TShiftState);
@@ -136,6 +138,9 @@ begin
   Caption := Application.Title;
   InitGui;
   InitItems;
+  AutoQuitTimer.OnTimer := HandleTimer;
+  AutoQuitTimer.Interval := 5000;
+  AutoQuitTimer.Enabled := True;
 end;
 
 
@@ -579,17 +584,26 @@ begin
 end;
 
 
+procedure TMainForm.HandleTimer(aSender: TObject);
+begin
+  Unused(aSender);
+  Quit;
+end;
+
+
 procedure TMainForm.HandleSearchEditChange(aSender: TObject);
 var
   vEdit: TEdit;
   vWidth: Integer;
 begin
+  AutoQuitTimer.Enabled := False;
   if (aSender is TEdit) then begin
     vEdit := aSender as TEdit;
     vWidth := Integer(Round(1.25 * Self.Canvas.TextWidth(vEdit.Text)));
     vEdit.Width := Min(Max(Screen.Width div 12, vWidth), Screen.Width div 2);
     Refilter(vEdit.Text);
   end;
+  AutoQuitTimer.Enabled := True;
 end;
 
 

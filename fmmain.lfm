@@ -38,4 +38,8 @@ object MainForm: TMainForm
     Caption = 'X'
     TabOrder = 2
   end
+  object AutoQuitTimer: TTimer
+    Enabled = False
+    Left = 136
+  end
 end
