@@ -82,6 +82,25 @@ implementation
 
 {$R *.lfm}
 
+procedure Unused(const aObject: TObject); overload;
+begin
+  if (aObject <> aObject) then
+    Exit;
+end;
+
+procedure Unused(const aShiftState: TShiftState); overload;
+begin
+  if (aShiftState <> aShiftState) then
+    Exit;
+end;
+
+procedure Unused(const aString: string); overload;
+begin
+  if (aString <> aString) then
+    Exit;
+end;
+
+
 { TMainForm }
 
 class function TMainForm.Version: string;
@@ -451,9 +470,8 @@ end;
 
 procedure TMainForm.OutputString(const aValue: string);
 begin
-  if (aValue <> aValue) then
-    Exit;
-    // WriteLn(aValue);
+  Unused(aValue);
+  // WriteLn(aValue);
 end;
 
 
@@ -521,19 +539,19 @@ end;
 
 procedure TMainForm.HandleSearchKeyDown(aSender: TObject; var aKey: Word; aShift: TShiftState);
 begin
+  Unused(aSender);
+  Unused(aShift);
   if (aKey = VK_RIGHT) then
     aKey := 0;
   if (aKey = VK_LEFT) then
     aKey := 0;
-  if (aSender <> aSender) then
-    Exit;
-  if (aShift <> aShift) then
-    Exit;
 end;
 
 
 procedure TMainForm.HandleKeyDown(aSender: TObject; var aKey: Word; aShift: TShiftState);
 begin
+  Unused(aSender);
+  Unused(aShift);
   if (aKey = VK_ESCAPE) then
     Quit;
   if (aKey = VK_RETURN) then
@@ -542,10 +560,6 @@ begin
     NextItem;
   if (aKey = VK_LEFT) then
     PrevItem;
-  if (aSender <> aSender) then
-    Exit;
-  if (aShift <> aShift) then
-    Exit;
 end;
 
 
