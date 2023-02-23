@@ -18,7 +18,7 @@ uses
 
   function IsVersionRequest: Boolean;
   var
-    vParameter: Ansistring;
+    vParameter: AnsiString;
   begin
     Result := False;
     if (ParamCount > 0) then begin
