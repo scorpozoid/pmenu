@@ -9,7 +9,7 @@ uses
   {$IFDEF HASAMIGA}
   athreads,
   {$ENDIF}
-  Windows,
+  Dialogs,
   StrUtils,
   Interfaces, // this includes the LCL widgetset
   Forms, fmmain;
@@ -31,10 +31,7 @@ uses
 
   procedure DisplayVersion;
   begin
-    AllocConsole;
-    IsConsole := True;
-    SysInitStdIO;
-    WriteLn(TMainForm.Version);
+    TMainForm.ShowVersion;
   end;
 
 begin

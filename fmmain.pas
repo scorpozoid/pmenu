@@ -3,8 +3,7 @@ unit fmmain;
 interface
 
 uses
-//Windows,
-  LCLType, Math, Process,
+  LCLType, Math, Process, // Windows,
   Classes, SysUtils, StrUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ExtCtrls;
 
 type
@@ -68,6 +67,7 @@ type
     cAppName = 'pmenu';
   public
     class function Version: string;
+    class procedure ShowVersion;
 
     constructor Create(aOwner: TComponent); override;
     destructor Destroy; override;
@@ -110,11 +110,19 @@ begin
   {$I pmenu.version}
 end;
 
-constructor TMainForm.Create(aOwner: TComponent);
+
+class procedure TMainForm.ShowVersion;
 begin
+  ShowMessage(TMainForm.Version);
   // AllocConsole;
   // IsConsole := True;
   // SysInitStdIO;
+  // WriteLn(TMainForm.Version);
+end;
+
+
+constructor TMainForm.Create(aOwner: TComponent);
+begin
   FCurrentIndex := -1;
   inherited Create(aOwner);
   FItems := TStringList.Create;
@@ -128,6 +136,7 @@ begin
     FreeAndNil(FItems);
   inherited Destroy;
 end;
+
 
 procedure TMainForm.AfterConstruction;
 begin
@@ -338,6 +347,7 @@ begin
   end;
 end;
 
+
 procedure TMainForm.Refilter(const aText: string);
 var
   vI: Integer;
@@ -372,6 +382,7 @@ function TMainForm.BuildItems: TStringList;
 begin
   Result := TStringList.Create;
   Result.Add('exit');
+  Result.Add('--version');
 end;
 
 
@@ -547,10 +558,12 @@ procedure TMainForm.HandleSearchKeyDown(aSender: TObject; var aKey: Word; aShift
 begin
   Unused(aSender);
   Unused(aShift);
+  AutoQuitTimer.Enabled := False;
   if (aKey = VK_RIGHT) then
     aKey := 0;
   if (aKey = VK_LEFT) then
     aKey := 0;
+  AutoQuitTimer.Enabled := True;
 end;
 
 
@@ -558,6 +571,7 @@ procedure TMainForm.HandleKeyDown(aSender: TObject; var aKey: Word; aShift: TShi
 begin
   Unused(aSender);
   Unused(aShift);
+  AutoQuitTimer.Enabled := False;
   if (aKey = VK_ESCAPE) then
     Quit;
   if (aKey = VK_RETURN) then
@@ -566,6 +580,7 @@ begin
     NextItem;
   if (aKey = VK_LEFT) then
     PrevItem;
+  AutoQuitTimer.Enabled := True;
 end;
 
 
@@ -597,14 +612,14 @@ var
   vEdit: TEdit;
   vWidth: Integer;
 begin
-  AutoQuitTimer.Enabled := False;
   if (aSender is TEdit) then begin
     vEdit := aSender as TEdit;
     vWidth := Integer(Round(1.25 * Self.Canvas.TextWidth(vEdit.Text)));
     vEdit.Width := Min(Max(Screen.Width div 12, vWidth), Screen.Width div 2);
     Refilter(vEdit.Text);
+    if (vEdit.Text = '--version') then
+      ShowVersion;
   end;
-  AutoQuitTimer.Enabled := True;
 end;
 
 

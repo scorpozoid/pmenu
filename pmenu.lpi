@@ -17,10 +17,10 @@
     <VersionInfo>
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="2023"/>
-      <MinorVersionNr Value="10223"/>
+      <MinorVersionNr Value="10224"/>
       <RevisionNr Value="11855"/>
-      <BuildNr Value="15287"/>
-      <StringTable FileDescription="0.1.23022318 (2023.10223.11855.15287)" InternalName="pmenu" ProductName="pmenu" ProductVersion="0.1.23022318"/>
+      <BuildNr Value="15499"/>
+      <StringTable FileDescription="0.1.23022418 (2023.10224.11855.15499)" InternalName="pmenu" ProductName="pmenu" ProductVersion="0.1.23022418"/>
     </VersionInfo>
     <BuildModes>
       <Item Name="Default" Default="True"/>
@@ -76,7 +76,7 @@
       <VerifyObjMethodCallValidity Value="True"/>
       <TargetCPU Value="i386"/>
       <Optimizations>
-        <OptimizationLevel Value="0"/>
+        <OptimizationLevel Value="3"/>
       </Optimizations>
     </CodeGeneration>
     <Linking>
