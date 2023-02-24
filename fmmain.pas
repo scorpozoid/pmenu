@@ -487,6 +487,7 @@ var
   vCurrent: TLabel;
   vOverdoze, vRightSide: Integer;
 begin
+  vCurrent := nil;
   for vI := 0 to FItems.Count - 1 do begin
     vItem := Item[vI];
     if (not Assigned(vItem)) then
