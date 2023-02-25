@@ -18,9 +18,9 @@
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="2023"/>
       <MinorVersionNr Value="10225"/>
-      <RevisionNr Value="11333"/>
-      <BuildNr Value="13538"/>
-      <StringTable FileDescription="0.1.23022513 (2023.10225.11333.13538)" InternalName="pmenu" ProductName="pmenu" ProductVersion="0.1.23022513"/>
+      <RevisionNr Value="11404"/>
+      <BuildNr Value="14309"/>
+      <StringTable FileDescription="0.1.23022514 (2023.10225.11404.14309)" InternalName="pmenu" ProductName="pmenu" ProductVersion="0.1.23022514"/>
     </VersionInfo>
     <BuildModes>
       <Item Name="Default" Default="True"/>
