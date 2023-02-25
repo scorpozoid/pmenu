@@ -17,10 +17,10 @@
     <VersionInfo>
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="2023"/>
-      <MinorVersionNr Value="10224"/>
-      <RevisionNr Value="11855"/>
-      <BuildNr Value="15499"/>
-      <StringTable FileDescription="0.1.23022418 (2023.10224.11855.15499)" InternalName="pmenu" ProductName="pmenu" ProductVersion="0.1.23022418"/>
+      <MinorVersionNr Value="10225"/>
+      <RevisionNr Value="11333"/>
+      <BuildNr Value="13538"/>
+      <StringTable FileDescription="0.1.23022513 (2023.10225.11333.13538)" InternalName="pmenu" ProductName="pmenu" ProductVersion="0.1.23022513"/>
     </VersionInfo>
     <BuildModes>
       <Item Name="Default" Default="True"/>
@@ -81,6 +81,7 @@
     </CodeGeneration>
     <Linking>
       <Debugging>
+        <GenerateDebugInfo Value="False"/>
         <DebugInfoType Value="dsDwarf2Set"/>
       </Debugging>
       <Options>

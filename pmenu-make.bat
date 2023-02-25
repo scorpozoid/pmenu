@@ -61,7 +61,7 @@ echo Build (portable) install...
 set PMENU_N=pmenu-%PMENU_VER%
 set PMENU_Z=%PMENU_N%.7z
 
-if exist %PMENU_Z% del %PMENU_Z%
+if exist *.7z del *.7z
 if exist %PMENU_N% rmdir /s /q %PMENU_N%
 
 mkdir %PMENU_N%
