@@ -592,9 +592,15 @@ end;
 
 
 procedure TMainForm.HandleItemClick(aSender: TObject);
+var
+  vItemTag: Integer;
 begin
   if (aSender is TLabel) then begin
     SearchEdit.Text := (aSender as TLabel).Caption;
+    Refilter(SearchEdit.Text);
+    vItemTag := (aSender as TLabel).Tag;
+    if (InRange(vItemTag)) then
+      FCurrentIndex := vItemTag;
     Return;
   end;
 end;
