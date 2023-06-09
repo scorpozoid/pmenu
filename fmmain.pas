@@ -354,18 +354,20 @@ var
   vCaption: string;
   vCurrent: TLabel;
   vOffset: Integer;
+  vText: string;
 begin
+  vText := Trim(aText);
   vOffset := Canvas.TextWidth('::');
   FCurrentIndex := -1;
   for vI := 0 to FItems.Count - 1 do begin
     vCurrent := Item[vI];
     if (not Assigned(vCurrent)) then
       Continue;
-    if (aText = EmptyStr) then begin
+    if (vText = EmptyStr) then begin
       vCurrent.Visible := True;
     end else begin
       vCaption := vCurrent.Caption;
-      vCurrent.Visible := vCaption.Contains(aText);
+      vCurrent.Visible := vCaption.Contains(vText);
     end;
     if (vCurrent.Visible) then begin
       if (0 > FCurrentIndex) then
