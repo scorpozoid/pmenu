@@ -21,4 +21,3 @@
 `pmenu` at top at the top of the screen.
 
 ![pmenu.png](img/pmenu.png)
-
